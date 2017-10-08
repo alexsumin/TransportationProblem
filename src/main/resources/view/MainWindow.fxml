@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141"
+      fx:controller="ru.alexsumin.transportproblem.view.MainWindowController">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="New"/>
+                        <MenuItem mnemonicParsing="false" text="Open…"/>
+                        <Menu mnemonicParsing="false" text="Open Recent"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem mnemonicParsing="false" text="Save"/>
+                        <MenuItem mnemonicParsing="false" text="Save As…"/>
+                        <MenuItem mnemonicParsing="false" text="Revert"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Preferences…"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Quit"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo"/>
+                        <MenuItem mnemonicParsing="false" text="Redo"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Cut"/>
+                        <MenuItem mnemonicParsing="false" text="Copy"/>
+                        <MenuItem mnemonicParsing="false" text="Paste"/>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" text="Select All"/>
+                        <MenuItem mnemonicParsing="false" text="Unselect All"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+                <TabPane layoutX="212.0" layoutY="56.0" prefHeight="371.0" prefWidth="640.0"
+                         tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <tabs>
+                        <Tab text="Untitled Tab 1">
+                            <content>
+                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                    <children>
+                                        <GridPane layoutX="500.0" layoutY="341.0" prefHeight="538.0" prefWidth="1000.0"
+                                                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="327.0" minWidth="10.0"
+                                                                   prefWidth="100.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="562.0" minWidth="10.0"
+                                                                   prefWidth="562.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints maxHeight="263.0" minHeight="10.0" prefHeight="81.0"
+                                                                vgrow="SOMETIMES"/>
+                                                <RowConstraints maxHeight="457.0" minHeight="10.0" prefHeight="457.0"
+                                                                vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
+                                                           GridPane.rowIndex="1">
+                                                    <columns>
+                                                        <TableColumn prefWidth="75.0" text="C1"/>
+                                                        <TableColumn prefWidth="75.0" text="C2"/>
+                                                        <TableColumn prefWidth="75.0" text="C3"/>
+                                                    </columns>
+                                                    <GridPane.margin>
+                                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                                    </GridPane.margin>
+                                                </TableView>
+                                                <TableView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"
+                                                           fx:id="suppliersTable">
+                                                    <GridPane.margin>
+                                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                                    </GridPane.margin>
+                                                </TableView>
+                                                <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
+                                                           GridPane.rowIndex="1" fx:id="consumersTable">
+                                                    <GridPane.margin>
+                                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                                                    </GridPane.margin>
+                                                </TableView>
+                                                <GridPane>
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                           prefWidth="100.0"/>
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Slider GridPane.rowIndex="1" fx:id="supplySlider">
+                                                            <padding>
+                                                                <Insets left="15.0" right="15.0"/>
+                                                            </padding>
+                                                        </Slider>
+                                                        <GridPane>
+                                                            <columnConstraints>
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                                   prefWidth="100.0"/>
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                                   prefWidth="100.0"/>
+                                                            </columnConstraints>
+                                                            <rowConstraints>
+                                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                                vgrow="SOMETIMES"/>
+                                                            </rowConstraints>
+                                                            <children>
+                                                                <Label text="Поставщики">
+                                                                    <padding>
+                                                                        <Insets left="15.0"/>
+                                                                    </padding>
+                                                                </Label>
+                                                                <Label text="3" GridPane.columnIndex="1"
+                                                                       fx:id="supplyLabel"/>
+                                                            </children>
+                                                        </GridPane>
+                                                    </children>
+                                                </GridPane>
+                                                <GridPane GridPane.columnIndex="2">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                           prefWidth="100.0"/>
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                    </rowConstraints>
+                                                </GridPane>
+                                                <GridPane GridPane.columnIndex="1">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                           prefWidth="100.0"/>
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Slider GridPane.rowIndex="1" fx:id="consumerSlider">
+                                                            <padding>
+                                                                <Insets left="15.0" right="15.0"/>
+                                                            </padding>
+                                                        </Slider>
+                                                        <GridPane>
+                                                            <columnConstraints>
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                                   prefWidth="100.0"/>
+                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+                                                                                   prefWidth="100.0"/>
+                                                            </columnConstraints>
+                                                            <rowConstraints>
+                                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                                vgrow="SOMETIMES"/>
+                                                            </rowConstraints>
+                                                            <children>
+                                                                <Label text="Потребители">
+                                                                    <padding>
+                                                                        <Insets left="15.0"/>
+                                                                    </padding>
+                                                                </Label>
+                                                                <Label text="3" GridPane.columnIndex="1"
+                                                                       fx:id="consumerLabel"/>
+                                                            </children>
+                                                        </GridPane>
+                                                    </children>
+                                                </GridPane>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                        <Tab text="Untitled Tab 2"/>
+                    </tabs>
+                </TabPane>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
