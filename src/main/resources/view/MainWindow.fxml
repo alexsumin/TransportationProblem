@@ -73,11 +73,8 @@
                                             </rowConstraints>
                                             <children>
                                                 <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
-                                                           GridPane.rowIndex="1">
+                                                           GridPane.rowIndex="1" fx:id="costTable">
                                                     <columns>
-                                                        <TableColumn prefWidth="75.0" text="C1"/>
-                                                        <TableColumn prefWidth="75.0" text="C2"/>
-                                                        <TableColumn prefWidth="75.0" text="C3"/>
                                                     </columns>
                                                     <GridPane.margin>
                                                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
