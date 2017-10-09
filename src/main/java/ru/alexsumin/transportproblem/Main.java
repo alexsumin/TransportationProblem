@@ -13,6 +13,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/view/MainWindow.fxml"));
         primaryStage.setTitle("Транспортная задача");
         primaryStage.setScene(new Scene(root, 1000, 600));
+        primaryStage.setMaxWidth(1000);
+        primaryStage.setMaxHeight(600);
         primaryStage.show();
 
 

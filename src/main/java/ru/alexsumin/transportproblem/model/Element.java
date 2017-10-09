@@ -23,6 +23,7 @@ public class Element {
 
     public void setValue(int value) {
         this.value = new SimpleIntegerProperty(value);
+
     }
 
     public SimpleStringProperty valueProperty() {

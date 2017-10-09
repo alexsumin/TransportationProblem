@@ -3,12 +3,14 @@ package ru.alexsumin.transportproblem.view;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import ru.alexsumin.transportproblem.model.Element;
 import ru.alexsumin.transportproblem.model.ElementForCost;
 
@@ -19,33 +21,35 @@ import java.util.List;
 public class MainWindowController {
 
     @FXML
-    Slider supplySlider = new Slider();
+    private Slider supplySlider = new Slider();
     @FXML
-    Label supplyLabel = new Label();
+    private Label supplyLabel = new Label();
     @FXML
-    Slider consumerSlider = new Slider();
+    private Slider consumerSlider = new Slider();
     @FXML
-    Label consumerLabel = new Label();
+    private Label consumerLabel = new Label();
 
     @FXML
-    TableView<Element> suppliersTable = new TableView<>();
+    private TableView<Element> suppliersTable = new TableView<>();
     @FXML
-    TableColumn suppliersColumn;
+    private TableColumn suppliersColumn;
     @FXML
-    TableView<Element> consumersTable = new TableView<>();
+    private TableView<Element> consumersTable = new TableView<>();
     @FXML
-    TableColumn consumersColumn;
+    private TableColumn consumersColumn;
     @FXML
     TableView<ElementForCost> costTable = new TableView<>();
 
-    List<Element> suppliers;
-    ObservableList suppliersObserv;
+    private List<Element> suppliers;
+    private ObservableList suppliersObserv;
 
-    List<Element> consumers;
-    ObservableList consumersObserv;
+    private List<Element> consumers;
+    private ObservableList consumersObserv;
 
-    ObservableList<ElementForCost> costs;
-    int columnIndex;
+    private ObservableList<ElementForCost> costs;
+    private int columnIndex;
+
+    private int columnSupplyIndex;
     private ElementForCost selectedItem;
 
     @FXML
@@ -134,14 +138,42 @@ public class MainWindowController {
         costTable.getSelectionModel().setCellSelectionEnabled(true);
 
 
+        configureColumn(suppliersColumn);
+        configureColumn(consumersColumn);
+        suppliersTable.getSelectionModel().setCellSelectionEnabled(true);
+        consumersTable.getSelectionModel().setCellSelectionEnabled(true);
+
+
         costTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.getTableColumn() != null) {
                 columnIndex = newVal.getColumn();
             }
         });
 
+        suppliersTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.getTableColumn() != null) {
+                columnSupplyIndex = newVal.getColumn();
+            }
+        });
+
     }
 
+    private void configureColumn(TableColumn column) {
+        column.setCellFactory(TextFieldTableCell.forTableColumn());
+        column.setOnEditCommit(
+                (EventHandler<TableColumn.CellEditEvent<Element, String>>) t -> (t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                ).setValue(temporary(t.getNewValue()))
+        );
+    }
+
+    private int temporary(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
 
     private void editRowsCostTable(int size) {
         while (costs.size() != size) {
@@ -201,6 +233,7 @@ public class MainWindowController {
             final int j = i;
             column.setCellValueFactory(cellData ->
                     new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
             column.setOnEditCommit(
                     t -> {
                         t.getTableView().getItems().get(
