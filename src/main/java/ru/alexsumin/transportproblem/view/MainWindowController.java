@@ -45,7 +45,8 @@ public class MainWindowController {
     ObservableList consumersObserv;
 
     ObservableList<ElementForCost> costs;
-
+    int columnIndex;
+    private ElementForCost selectedItem;
 
     @FXML
     public void initialize() {
@@ -96,10 +97,13 @@ public class MainWindowController {
 
 
         List<ElementForCost> listCosts = new ArrayList();
+
+
         for (int i = 0; i < suppliersObserv.size(); i++) {
             ElementForCost temp = new ElementForCost();
             temp.setSize(consumersObserv.size());
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < temp.getSize(); j++) {
+
                 temp.setByIndex(j, 0);
             }
             listCosts.add(temp);
@@ -114,17 +118,30 @@ public class MainWindowController {
 
 
         supplySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            editRowsCostTable((int) Math.round((double) (newValue)));
+            editRowsCostTable(newValue.intValue());
         });
 
         consumerSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            //editColumnsCostTable((int) Math.round((double) (newValue)));
-            updateColumnsCostTable((int) Math.round((double) (newValue)));
+            editColumnsCostTable(newValue.intValue());
+            updateColumnsCostTable(newValue.intValue());
         });
 
 
         costTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+
+        costTable.setEditable(true);
+        costTable.getSelectionModel().setCellSelectionEnabled(true);
+
+
+        costTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.getTableColumn() != null) {
+                columnIndex = newVal.getColumn();
+            }
+        });
+
     }
+
 
     private void editRowsCostTable(int size) {
         while (costs.size() != size) {
@@ -173,15 +190,22 @@ public class MainWindowController {
         });
     }
 
+
     private void updateColumnsCostTable(int size) {
 
         costTable.getColumns().clear();
         List<TableColumn> columnsList = new ArrayList<>(size);
+
         for (int i = 0; i < size; i++) {
             TableColumn<ElementForCost, String> column = new TableColumn<>("Потребитель " + (i + 1));
             final int j = i;
             column.setCellValueFactory(cellData ->
                     new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));
+            column.setOnEditCommit(
+                    t -> {
+                        t.getTableView().getItems().get(
+                                t.getTablePosition().getRow()).setByIndex(columnIndex, Integer.parseInt(t.getNewValue()));
+                    });
             columnsList.add(column);
         }
         for (TableColumn c :
@@ -190,11 +214,7 @@ public class MainWindowController {
         }
         costTable.refresh();
     }
-
-    private void updateRowsCostTable(int size) {
-
-    }
-
-
 }
+
+
 
