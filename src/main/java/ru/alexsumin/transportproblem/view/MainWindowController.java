@@ -85,24 +85,14 @@ public class MainWindowController {
 
         setDefault();
 
-
-
-
-
-
-
         costTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-
         costTable.setEditable(true);
         costTable.getSelectionModel().setCellSelectionEnabled(true);
-
 
         configureColumn(suppliersColumn);
         configureColumn(consumersColumn);
         suppliersTable.getSelectionModel().setCellSelectionEnabled(true);
         consumersTable.getSelectionModel().setCellSelectionEnabled(true);
-
 
         costTable.getFocusModel().focusedCellProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.getTableColumn() != null) {
@@ -192,12 +182,10 @@ public class MainWindowController {
         setDataToTable(solution, tableNW);
         costNWLabel.setText(String.valueOf(solver.getStoimostPerevozki()));
 
-
         List result;
         result = solver.solveTask(64);
         optCostLabel.setText(String.valueOf(result.get(0)));
         setDataToTable((int[][]) result.get(1), tableOptim);
-
 
     }
 
@@ -320,7 +308,7 @@ public class MainWindowController {
         List<TableColumn> columnsList = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            TableColumn<Element, String> column = new TableColumn<>("Потребитель " + (i + 1));
+            TableColumn<Element, String> column = new TableColumn<>("Need " + (i + 1));
             final int j = i;
             column.setCellValueFactory(cellData ->
                     new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));
@@ -341,7 +329,7 @@ public class MainWindowController {
         List<TableColumn> columnsList = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            TableColumn<Element, String> column = new TableColumn<>("Потребитель " + (i + 1));
+            TableColumn<Element, String> column = new TableColumn<>("Need " + (i + 1));
             final int j = i;
             column.setCellValueFactory(cellData ->
                     new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));

@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141"
       fx:controller="ru.alexsumin.transportproblem.view.MainWindowController">
     <children>
@@ -10,16 +11,16 @@
             <menus>
                 <Menu mnemonicParsing="false" text="Меню">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Выполнить рассчёт" onAction="#calculate"/>
-                        <MenuItem mnemonicParsing="false" text="Установить произвольную стоимость"
-                                  onAction="#setRandomCost"/>
+                        <MenuItem mnemonicParsing="false" onAction="#calculate" text="Выполнить рассчёт"/>
+                        <MenuItem mnemonicParsing="false" onAction="#setRandomCost"
+                                  text="Установить произвольную стоимость"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Выход" onAction="#exit"/>
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="Выход"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Помощь">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="О программе" onAction="#about"/>
+                        <MenuItem mnemonicParsing="false" onAction="#about" text="О программе"/>
                     </items>
                 </Menu>
             </menus>
@@ -97,8 +98,8 @@
                                                                                    prefWidth="100.0"/>
                                                             </columnConstraints>
                                                             <rowConstraints>
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                                vgrow="SOMETIMES"/>
+                                                                <RowConstraints maxHeight="40.0" minHeight="40.0"
+                                                                                prefHeight="40.0" vgrow="SOMETIMES"/>
                                                             </rowConstraints>
                                                             <children>
                                                                 <Label text="Поставщики">
@@ -162,8 +163,8 @@
                                                                                    prefWidth="100.0"/>
                                                             </columnConstraints>
                                                             <rowConstraints>
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                                vgrow="SOMETIMES"/>
+                                                                <RowConstraints maxHeight="40.0" minHeight="40.0"
+                                                                                prefHeight="40.0" vgrow="SOMETIMES"/>
                                                             </rowConstraints>
                                                             <children>
                                                                 <Label text="Потребители">
@@ -238,20 +239,25 @@
                                                                         vgrow="SOMETIMES"/>
                                                     </rowConstraints>
                                                     <children>
-                                                        <Label text="Метод северо-западного угла:"
-                                                               GridPane.rowIndex="1">
-                                                            <GridPane.margin>
-                                                                <Insets left="15.0"/>
-                                                            </GridPane.margin>
-                                                        </Label>
                                                         <AnchorPane prefHeight="200.0" prefWidth="200.0"
                                                                     GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             <children>
                                                                 <Label fx:id="costNWLabel" layoutX="192.0"
-                                                                       layoutY="10.0" AnchorPane.rightAnchor="20.0"/>
+                                                                       layoutY="10.0" AnchorPane.bottomAnchor="10.0"
+                                                                       AnchorPane.rightAnchor="20.0"/>
                                                                 <Label layoutX="156.0" layoutY="10.0"
                                                                        text="Стоимость перевозки:"
+                                                                       AnchorPane.bottomAnchor="10.0"
                                                                        AnchorPane.rightAnchor="60.0"/>
+                                                            </children>
+                                                        </AnchorPane>
+                                                        <AnchorPane prefHeight="200.0" prefWidth="200.0"
+                                                                    GridPane.rowIndex="1">
+                                                            <children>
+                                                                <Label layoutX="41.0" layoutY="10.0"
+                                                                       text="Метод северо-западного угла"
+                                                                       AnchorPane.bottomAnchor="10.0"
+                                                                       AnchorPane.leftAnchor="15.0"/>
                                                             </children>
                                                         </AnchorPane>
                                                     </children>
@@ -270,19 +276,25 @@
                                                                         vgrow="SOMETIMES"/>
                                                     </rowConstraints>
                                                     <children>
-                                                        <Label text="Оптимизация:" GridPane.rowIndex="1">
-                                                            <GridPane.margin>
-                                                                <Insets left="15.0"/>
-                                                            </GridPane.margin>
-                                                        </Label>
                                                         <AnchorPane prefHeight="200.0" prefWidth="200.0"
                                                                     GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             <children>
                                                                 <Label fx:id="optCostLabel" layoutX="164.0"
-                                                                       layoutY="10.0" AnchorPane.rightAnchor="20.0"/>
+                                                                       layoutY="10.0" AnchorPane.bottomAnchor="10.0"
+                                                                       AnchorPane.rightAnchor="20.0"/>
                                                                 <Label layoutX="192.0" layoutY="10.0"
                                                                        text="Стоимость перевозки:"
+                                                                       AnchorPane.bottomAnchor="10.0"
                                                                        AnchorPane.rightAnchor="60.0"/>
+                                                            </children>
+                                                        </AnchorPane>
+                                                        <AnchorPane prefHeight="200.0" prefWidth="200.0"
+                                                                    GridPane.rowIndex="1">
+                                                            <children>
+                                                                <Label layoutX="44.0" layoutY="10.0"
+                                                                       text="Оптимизация решения"
+                                                                       AnchorPane.bottomAnchor="10.0"
+                                                                       AnchorPane.leftAnchor="15.0"/>
                                                             </children>
                                                         </AnchorPane>
                                                     </children>
@@ -298,4 +310,7 @@
             </children>
         </AnchorPane>
     </children>
+    <stylesheets>
+        <URL value="@/view/styles.css"/>
+    </stylesheets>
 </VBox>

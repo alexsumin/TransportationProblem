@@ -18,6 +18,9 @@ public class SimpleElement {
     }
 
     public int getValue() {
+        if (value == null) {
+            return 0;
+        }
         return value.get();
     }
 
