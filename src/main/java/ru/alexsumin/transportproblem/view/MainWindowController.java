@@ -5,14 +5,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import ru.alexsumin.transportproblem.math.Solver;
 import ru.alexsumin.transportproblem.model.Element;
-import ru.alexsumin.transportproblem.model.ElementForCost;
+import ru.alexsumin.transportproblem.model.SimpleElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,28 +27,46 @@ public class MainWindowController {
     @FXML
     private Label consumerLabel = new Label();
 
-    @FXML
-    private TableView<Element> suppliersTable = new TableView<>();
+    public static final int INIT_VALUE = 3;
     @FXML
     private TableColumn suppliersColumn;
     @FXML
-    private TableView<Element> consumersTable = new TableView<>();
+    TableView<Element> costTable = new TableView<>();
     @FXML
     private TableColumn consumersColumn;
     @FXML
-    TableView<ElementForCost> costTable = new TableView<>();
+    TableView<Element> tableNW = new TableView<>();
+    @FXML
+    TableView<Element> tableOptim = new TableView<>();
+    @FXML
+    Label costNWLabel = new Label();
+    @FXML
+    Label optCostLabel = new Label();
+    @FXML
+    private TableView<SimpleElement> suppliersTable = new TableView<>();
+    @FXML
+    private TableView<SimpleElement> consumersTable = new TableView<>();
+    private List<SimpleElement> suppliers;
+    private ObservableList<SimpleElement> suppliersObserv;
 
-    private List<Element> suppliers;
-    private ObservableList suppliersObserv;
+    private List<SimpleElement> consumers;
+    private ObservableList<SimpleElement> consumersObserv;
 
-    private List<Element> consumers;
-    private ObservableList consumersObserv;
+    private ObservableList<Element> costs;
 
-    private ObservableList<ElementForCost> costs;
     private int columnIndex;
-
     private int columnSupplyIndex;
-    private ElementForCost selectedItem;
+
+    private Solver solver;
+    private int[][] solution;
+
+    private static List convertList(List<SimpleElement> toConvert) {
+        List<Integer> result = new ArrayList<>();
+        for (SimpleElement e : toConvert) {
+            result.add(e.getValue());
+        }
+        return result;
+    }
 
     @FXML
     public void initialize() {
@@ -67,68 +83,12 @@ public class MainWindowController {
                 new PropertyValueFactory<>("value"));
         consumersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        suppliers = new ArrayList<>(3);
-        consumers = new ArrayList<>(3);
-
-        Element e1 = new Element();
-        Element e2 = new Element();
-        Element e3 = new Element();
-        e1.setValue(40);
-        e2.setValue(30);
-        e3.setValue(20);
-
-        Element e4 = new Element();
-        Element e5 = new Element();
-        Element e6 = new Element();
-        e4.setValue(20);
-        e5.setValue(40);
-        e6.setValue(30);
-
-        suppliers.addAll(Arrays.asList(e1, e2, e3));
-        consumers.addAll(Arrays.asList(e4, e5, e6));
-
-        suppliersObserv = FXCollections.observableArrayList(suppliers);
-        consumersObserv = FXCollections.observableArrayList(consumers);
-
-        configureSlider(supplySlider, supplyLabel, suppliersObserv);
-        configureSlider(consumerSlider, consumerLabel, consumersObserv);
-
-        suppliersTable.setItems(suppliersObserv);
-        suppliersTable.getColumns().add(suppliersColumn);
-
-        consumersTable.setItems(consumersObserv);
-        consumersTable.getColumns().add(consumersColumn);
+        setDefault();
 
 
-        List<ElementForCost> listCosts = new ArrayList();
 
 
-        for (int i = 0; i < suppliersObserv.size(); i++) {
-            ElementForCost temp = new ElementForCost();
-            temp.setSize(consumersObserv.size());
-            for (int j = 0; j < temp.getSize(); j++) {
 
-                temp.setByIndex(j, 0);
-            }
-            listCosts.add(temp);
-        }
-
-        updateColumnsCostTable(3);
-
-        costs = FXCollections.observableArrayList(listCosts);
-
-        costTable.setItems(costs);
-        editRowsCostTable(3);
-
-
-        supplySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            editRowsCostTable(newValue.intValue());
-        });
-
-        consumerSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            editColumnsCostTable(newValue.intValue());
-            updateColumnsCostTable(newValue.intValue());
-        });
 
 
         costTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -161,13 +121,13 @@ public class MainWindowController {
     private void configureColumn(TableColumn column) {
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setOnEditCommit(
-                (EventHandler<TableColumn.CellEditEvent<Element, String>>) t -> (t.getTableView().getItems().get(
+                (EventHandler<TableColumn.CellEditEvent<SimpleElement, String>>) t -> (t.getTableView().getItems().get(
                         t.getTablePosition().getRow())
-                ).setValue(temporary(t.getNewValue()))
+                ).setValue(viewHelp(t.getNewValue()))
         );
     }
 
-    private int temporary(String s) {
+    private int viewHelp(String s) {
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
@@ -176,9 +136,10 @@ public class MainWindowController {
     }
 
     private void editRowsCostTable(int size) {
+
         while (costs.size() != size) {
             if (costs.size() < size) {
-                ElementForCost el = new ElementForCost();
+                Element el = new Element();
                 el.setSize(consumersObserv.size());
                 for (int i = 0; i < consumersObserv.size(); i++) {
                     el.setByIndex(i, 0);
@@ -195,18 +156,17 @@ public class MainWindowController {
 
     private void editColumnsCostTable(int size) {
         while (costs.get(0).getSize() != size) {
-            for (ElementForCost e :
+            for (Element e :
                     costs)
                 e.setSize(size);
         }
         costTable.refresh();
     }
 
-
     private void configureSlider(Slider slider, Label label, List list) {
         slider.setMin(1);
         slider.setMax(9);
-        slider.setValue(3);
+        slider.setValue(INIT_VALUE);
         slider.setBlockIncrement(1);
 
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -214,12 +174,164 @@ public class MainWindowController {
             label.setText(String.valueOf(temp));
             while (temp != list.size()) {
                 if (temp > list.size()) {
-                    list.add(new Element());
+                    list.add(new SimpleElement());
                 } else {
                     list.remove(list.size() - 1);
                 }
             }
         });
+    }
+
+    @FXML
+    private void calculate() {
+        solver = new Solver();
+        solver.setStorageStock(convertList(suppliersObserv));
+        solver.setShopNeeds(convertList(consumersObserv));
+        solver.setCostTable(convertToInteger(costs));
+        solution = solver.calcNW();
+        setDataToTable(solution, tableNW);
+        costNWLabel.setText(String.valueOf(solver.getStoimostPerevozki()));
+
+
+        List result;
+        result = solver.solveTask(64);
+        optCostLabel.setText(String.valueOf(result.get(0)));
+        setDataToTable((int[][]) result.get(1), tableOptim);
+
+
+    }
+
+    @FXML
+    private void setRandomCost() {
+        for (int i = 0; i < costs.size(); i++) {
+            for (int j = 0; j < consumersObserv.size(); j++) {
+                int newValue = (int) (Math.random() * 10);
+                costs.get(i).setByIndex(j, newValue);
+            }
+        }
+        costTable.refresh();
+    }
+
+    @FXML
+    private void setDefault() {
+        suppliers = new ArrayList<>(INIT_VALUE);
+        consumers = new ArrayList<>(INIT_VALUE);
+
+        SimpleElement e1 = new SimpleElement();
+        SimpleElement e2 = new SimpleElement();
+        SimpleElement e3 = new SimpleElement();
+        e1.setValue(40);
+        e2.setValue(30);
+        e3.setValue(20);
+
+        SimpleElement e4 = new SimpleElement();
+        SimpleElement e5 = new SimpleElement();
+        SimpleElement e6 = new SimpleElement();
+        e4.setValue(20);
+        e5.setValue(40);
+        e6.setValue(30);
+
+        suppliers.addAll(Arrays.asList(e1, e2, e3));
+        consumers.addAll(Arrays.asList(e4, e5, e6));
+
+        suppliersObserv = FXCollections.observableArrayList(suppliers);
+        consumersObserv = FXCollections.observableArrayList(consumers);
+
+        configureSlider(supplySlider, supplyLabel, suppliersObserv);
+        configureSlider(consumerSlider, consumerLabel, consumersObserv);
+
+        suppliersTable.setItems(suppliersObserv);
+        suppliersTable.getColumns().add(suppliersColumn);
+
+        consumersTable.setItems(consumersObserv);
+        consumersTable.getColumns().add(consumersColumn);
+
+
+        List<Element> listCosts = new ArrayList();
+
+
+        for (int i = 0; i < suppliersObserv.size(); i++) {
+            Element temp = new Element();
+            temp.setSize(consumersObserv.size());
+            for (int j = 0; j < temp.getSize(); j++) {
+                temp.setByIndex(j, 0);
+            }
+            listCosts.add(temp);
+        }
+
+        updateColumnsCostTable(INIT_VALUE);
+
+        costs = FXCollections.observableArrayList(listCosts);
+
+        costTable.setItems(costs);
+        editRowsCostTable(INIT_VALUE);
+
+        supplySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            editRowsCostTable(newValue.intValue());
+        });
+
+        consumerSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            editColumnsCostTable(newValue.intValue());
+            updateColumnsCostTable(newValue.intValue());
+        });
+    }
+
+    @FXML
+    private void exit() {
+        System.exit(0);
+    }
+
+    private List convertToInteger(List<Element> list) {
+        List forReturn = new ArrayList();
+        for (int i = 0; i < list.size(); i++) {
+            List<Integer> innerList = new ArrayList();
+            for (int j = 0; j < consumersObserv.size(); j++) {
+                innerList.add(list.get(i).getByIndex(j));
+            }
+            forReturn.add(innerList);
+        }
+        return forReturn;
+    }
+
+
+    private void setDataToTable(int[][] array, TableView table) {
+        List<Element> list = new ArrayList<>();
+
+        for (int i = 0; i < suppliersObserv.size(); i++) {
+            Element el = new Element();
+            el.setSize(consumersObserv.size());
+            for (int j = 0; j < consumersObserv.size(); j++) {
+                el.setByIndex(j, array[i][j]);
+            }
+            list.add(el);
+        }
+        ObservableList listForNW = FXCollections.observableArrayList(list);
+
+        table.setItems(listForNW);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        createColumns(consumersObserv.size(), table);
+
+
+    }
+
+    private void createColumns(int size, TableView table) {
+
+        table.getColumns().clear();
+        List<TableColumn> columnsList = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            TableColumn<Element, String> column = new TableColumn<>("Потребитель " + (i + 1));
+            final int j = i;
+            column.setCellValueFactory(cellData ->
+                    new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            columnsList.add(column);
+        }
+        for (TableColumn c :
+                columnsList) {
+            table.getColumns().add(c);
+        }
     }
 
 
@@ -229,16 +341,14 @@ public class MainWindowController {
         List<TableColumn> columnsList = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            TableColumn<ElementForCost, String> column = new TableColumn<>("Потребитель " + (i + 1));
+            TableColumn<Element, String> column = new TableColumn<>("Потребитель " + (i + 1));
             final int j = i;
             column.setCellValueFactory(cellData ->
                     new ReadOnlyStringWrapper(cellData.getValue().getByIndex(j) + ""));
             column.setCellFactory(TextFieldTableCell.forTableColumn());
             column.setOnEditCommit(
-                    t -> {
-                        t.getTableView().getItems().get(
-                                t.getTablePosition().getRow()).setByIndex(columnIndex, Integer.parseInt(t.getNewValue()));
-                    });
+                    t -> t.getTableView().getItems().get(
+                            t.getTablePosition().getRow()).setByIndex(columnIndex, Integer.parseInt(t.getNewValue())));
             columnsList.add(column);
         }
         for (TableColumn c :
@@ -246,6 +356,17 @@ public class MainWindowController {
             costTable.getColumns().add(c);
         }
         costTable.refresh();
+    }
+
+    @FXML
+    private void about() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("О программе");
+        alert.setHeaderText("\tПрограмма позволяет получить решение транспортной задачи методом\n" +
+                "\tсеверо-западного угла, а также выполнить оптимизацию решения.\n" +
+                "\tАвторы студенты группы 444: Кривобокова А., Шарипова М., Сумин А.\n" +
+                "\t\t\t\t\t\t СПбГТИ(ТУ) 2017");
+        alert.showAndWait();
     }
 }
 

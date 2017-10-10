@@ -1,33 +1,35 @@
 package ru.alexsumin.transportproblem.model;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class Element {
 
+    private List<SimpleElement> data = new ArrayList<>();
 
-    private SimpleIntegerProperty value;
-
-    public Element(int value) {
-        this.value = new SimpleIntegerProperty(value);
+    public int getSize() {
+        return data.size();
     }
 
-    public Element() {
-
+    public void setSize(int size) {
+        while (data.size() != size) {
+            if (data.size() < size) {
+                SimpleElement simpleElement = new SimpleElement();
+                simpleElement.setValue(0);
+                data.add(simpleElement);
+            } else data.remove(data.size() - 1);
+        }
     }
 
-    public int getValue() {
-        return value.get();
+    public int getByIndex(int index) {
+        if (data.get(index).getValue() == -1) {
+            return 0;
+        }
+        return data.get(index).getValue();
     }
 
-    public void setValue(int value) {
-        this.value = new SimpleIntegerProperty(value);
 
-    }
-
-    public SimpleStringProperty valueProperty() {
-        if (value == null) return new SimpleStringProperty("Введите значение");
-        return new SimpleStringProperty(String.valueOf(value.intValue()));
+    public void setByIndex(int index, int value) {
+        data.get(index).setValue(value);
     }
 }
