@@ -180,7 +180,7 @@ public class MainWindowController {
         solver.setCostTable(convertToInteger(costs));
         solution = solver.calcNW();
         setDataToTable(solution, tableNW);
-        costNWLabel.setText(String.valueOf(solver.getStoimostPerevozki()));
+        costNWLabel.setText(String.valueOf(solver.getCost()));
 
         List result;
         result = solver.solveTask(64);
@@ -344,6 +344,20 @@ public class MainWindowController {
             costTable.getColumns().add(c);
         }
         costTable.refresh();
+    }
+
+    @FXML
+    private void helpWindow() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Как работать с программой");
+        alert.setHeaderText("Программа предназначена для решения транспортной задачи.\n" +
+                "\n\n" +
+                "1. Задайте количество поставщиков и потребителей.\n" +
+                "2. Установите значения для потребителей и поставщиков.\n" +
+                "3. Установите стоиомсть перевозки(двойной клик по ячейке таблицы).\n" +
+                "4. Нажмите \"Рассчитать\" - программа выполнит рассчёт и оптимизацию решения.\n" +
+                "5. Переключитесь на вкладку \"Результаты\", чтобы увидеть результат решения.");
+        alert.showAndWait();
     }
 
     @FXML

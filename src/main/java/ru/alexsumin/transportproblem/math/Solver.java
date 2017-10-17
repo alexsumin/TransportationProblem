@@ -25,7 +25,7 @@ public class Solver {
         this.costTable = costTable;
     }
 
-    public int getStoimostPerevozki() {
+    public int getCost() {
         core = new MathCore(shopNeeds, storageStock, costTable);
         core.createBasicRoutes();
         return core.getCurrentCost();
